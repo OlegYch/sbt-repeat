@@ -1,12 +1,17 @@
 import sbt.complete.DefaultParsers._
 import sbt.IO
 
-lazy val root = project.in(file("."))
+@transient
+val write = TaskKey[Unit]("write")
+@transient
+val check = InputKey[Unit]("check")
+lazy val root = project
+  .in(file("."))
   .settings(
-    TaskKey[Unit]("write") := {
+    write := {
       IO.append(target.value / "count.txt", "a")
     },
-    InputKey[Unit]("check") := {
+    check := {
       val n = (Space ~> NatBasic).parsed
       val len = IO.read(target.value / "count.txt").length
       if (n != len) {
@@ -14,4 +19,4 @@ lazy val root = project.in(file("."))
       }
       ()
     }
-)
+  )
